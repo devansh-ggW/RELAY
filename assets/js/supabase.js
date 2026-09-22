@@ -255,7 +255,7 @@
 
     async listConversations(userId) {
       if (!client) return [];
-      const { data, error } = await client.from('conversations').select('*').or('seeker_id.eq.'+userId+',employer_id.eq.'+userId).order('created_at',{ascending:false});
+      const { data, error } = await client.from('conversations').select('id,job_id,seeker_id,employer_id,seeker_name,employer_name,created_at').or('seeker_id.eq.'+userId+',employer_id.eq.'+userId).order('created_at',{ascending:false});
       if (error) throw error;
       return data || [];
     },
