@@ -178,16 +178,16 @@
     async listTalent() {
       if (!client) return [];
       const { data, error } = await client
-        .from('talent_profiles')
+        .from('profile_public')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('updated_at', { ascending: false });
       if (error) throw error;
       return data || [];
     },
 
     async getTalent(id) {
       if (!client) return null;
-      const { data, error } = await client.from('talent_profiles').select('*').eq('id', id).maybeSingle();
+      const { data, error } = await client.from('profile_public').select('*').eq('id', id).maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -196,7 +196,7 @@
       if (!client) return [];
       const { data, error } = await client
         .from('applications')
-        .select('id,status,cover_note,created_at,jobs!inner(id,title,company,location,owner_id),profiles:applicant_id(id,name,headline,city,state,skills,about,experience_years,age)')
+        .select('id,job_id,applicant_id,status,cover_note,created_at,applicant_name,applicant_headline,applicant_city,applicant_state,applicant_skills,applicant_about,applicant_experience_years,jobs!inner(id,title,company,location,owner_id)')
         .eq('jobs.owner_id', userId)
         .order('created_at',{ascending:false});
       if (error) throw error;
