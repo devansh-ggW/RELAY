@@ -1,1 +1,62 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relay — Find work. Hire people.</title><meta name="description" content="Relay is an India-first marketplace for adults looking for work and people hiring talent."><link rel="icon" href="assets/relay-icon.svg"><link rel="stylesheet" href="assets/css/styles.css"></head><body><div id="app-shell"></div><main><section class="hero"><div class="container hero-grid"><div><div class="eyebrow"><span class="dot"></span>India-first hiring</div><h1>Find work. Hire people. Keep it simple.</h1><p class="hero-copy">Relay is a straightforward place for adults in India to discover real opportunities or publish real openings. No fake listings. No inflated numbers.</p><form class="search-box" id="heroSearch"><input id="heroQuery" aria-label="Search work" placeholder="Search by role, skill, or city"><button class="btn btn-blue" type="submit">Find work →</button></form><div style="display:flex;gap:9px;margin-top:13px"><a class="btn btn-primary" href="signup.html">Create an account</a><a class="btn" href="jobs.html">Browse openings</a></div></div><div class="hero-panel"><div class="hero-panel-head"><div><div class="hero-panel-title">Live marketplace</div><div class="small-muted">Only published Relay openings appear here.</div></div><span class="tag tag-blue">India</span></div><div id="featuredJobs" class="mini-list"><div class="empty">Loading live openings…</div></div></div></div></section><section class="section" id="how"><div class="container"><div class="section-head"><div><h2 class="section-title">One platform. Two sides.</h2><p class="section-copy">Job seekers build a useful profile. Employers publish what they actually need.</p></div></div><div class="cards cards-3"><div class="role-card"><div><div class="role-icon">◎</div><h3>For people looking for work</h3><p>Create a clear profile, discover openings, and apply directly.</p></div><a class="btn btn-small" href="signup.html">Join as a job seeker →</a></div><div class="role-card"><div><div class="role-icon">□</div><h3>For people hiring</h3><p>Publish a specific role with pay, location, work style, and requirements.</p></div><a class="btn btn-small" href="signup.html">Join as an employer →</a></div><div class="role-card"><div><div class="role-icon">↗</div><h3>For both sides</h3><p>Keep applications and conversations in one place instead of bouncing between tools.</p></div><a class="btn btn-small" href="jobs.html">See live openings →</a></div></div></div></section><section class="section"><div class="container"><div class="detail-card"><div class="eyebrow"><span class="dot"></span>Built around trust</div><h2 style="font-size:2.25rem;letter-spacing:-.045em;margin:9px 0 10px">Real people. Real profiles. Real openings.</h2><p class="hero-copy" style="font-size:.96rem;margin-bottom:20px">Relay does not seed the marketplace with made-up companies, jobs, applicants, reviews, or activity. Until people join and publish something, the product stays empty.</p><a class="btn btn-primary" href="safety.html">Read our safety approach →</a></div></div></section></main><div id="site-footer"></div><script src="assets/js/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/supabase.js"></script><script src="assets/js/data.js"></script><script src="assets/js/app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relay — Find work. Hire people.</title>
+<meta name="description" content="Relay is an India-only hiring marketplace for adults 18 and over.">
+<link rel="icon" href="assets/relay-icon.svg"><link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div id="app-shell"></div>
+<main>
+<section class="hero">
+<div class="container hero-grid">
+<div>
+<div class="eyebrow"><span class="dot"></span>India · 18+ · Hiring marketplace</div>
+<h1>Find work. Hire people. Without the noise.</h1>
+<p class="hero-copy">Relay keeps hiring simple: real profiles, real openings, direct applications, and straightforward conversations. Nothing gets invented to make the marketplace look bigger than it is.</p>
+<form class="search-box" id="heroSearch"><input id="heroQuery" aria-label="Search work" autocomplete="off" placeholder="Search by role, skill, or city"><button class="btn btn-blue" type="submit">Find work <span aria-hidden="true">→</span></button></form>
+<div class="hero-actions"><a class="btn btn-primary btn-large" href="signup.html">Create an account</a><a class="btn btn-large" href="jobs.html">Browse live openings</a></div>
+<div class="hero-note">No account needed to browse. You need to be 18+ to join and apply.</div>
+</div>
+<div class="hero-panel">
+<div class="hero-panel-head"><div><div class="hero-panel-title">Live marketplace</div><div class="small-muted">Published by real Relay employers.</div></div><span class="tag tag-blue">India</span></div>
+<div id="featuredJobs" class="mini-list"><div class="empty">Loading live openings…</div></div>
+<a class="panel-link" href="jobs.html">See all live openings <span>→</span></a>
+</div>
+</div>
+</section>
+
+<section class="section" id="how">
+<div class="container">
+<div class="section-head"><div><div class="eyebrow"><span class="dot"></span>How Relay works</div><h2 class="section-title">Two sides. One clean workflow.</h2><p class="section-copy">Everything useful happens inside the product. The rest stays out of the way.</p></div></div>
+<div class="cards cards-3">
+<div class="role-card"><div><div class="role-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div><h3>Build a useful profile</h3><p>Skills, city, experience, and a clear description. Only publish what you are comfortable sharing.</p></div><a class="btn btn-small" href="signup.html">Join Relay <span>→</span></a></div>
+<div class="role-card"><div><div class="role-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div><h3>Publish a real opening</h3><p>Set the role, location, work style, pay, and skills so people know what they are applying for.</p></div><a class="btn btn-small" href="signup.html">Start hiring <span>→</span></a></div>
+<div class="role-card"><div><div class="role-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div><h3>Move the conversation</h3><p>Review applications and message people directly when there is a genuine reason to continue.</p></div><a class="btn btn-small" href="messages.html">See messaging <span>→</span></a></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="container split-section">
+<div><div class="eyebrow"><span class="dot"></span>For job seekers</div><h2 class="section-title">Be findable for the work you actually want.</h2><p class="section-copy">Your age and other private account data stay out of the public talent profile. You control whether your profile is visible and whether you are available for work.</p><a class="btn btn-primary" href="signup.html">Create seeker profile</a></div>
+<div><div class="eyebrow"><span class="dot"></span>For employers</div><h2 class="section-title">Hire from real people, not a pile of noise.</h2><p class="section-copy">Publish a specific opening, search available talent, review applicants, and start a conversation when there is a fit.</p><a class="btn btn-primary" href="signup.html">Create employer account</a></div>
+</div>
+</section>
+
+<section class="section">
+<div class="container">
+<div class="detail-card dark-card">
+<div class="eyebrow muted-eyebrow"><span class="dot"></span>Relay standard</div>
+<h2>Empty is better than fake.</h2>
+<p>On day one, Relay may have no openings at all. That is intentional. The marketplace fills from what real people publish after they join.</p>
+<a class="btn btn-blue" href="safety.html">Read the safety approach <span>→</span></a>
+</div>
+</div>
+</section>
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/supabase.js"></script><script src="assets/js/app.js"></script>
+</body>
+</html>
