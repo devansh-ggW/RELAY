@@ -210,6 +210,14 @@
     };
   }
 
+  function prepareGoogleSignupData(form) {
+    const data = new FormData(form);
+    const age = Number(data.get('age'));
+    if (!age || age < 18) throw new Error('Relay is currently for adults aged 18 and over.');
+    if (!data.get('ageTruth') || !data.get('terms') || !data.get('privacy')) throw new Error('Please confirm your age and accept the required policies.');
+    return { role: data.get('role').toString(), age };
+  }
+
   function wireGoogle(button, source) {
     if (!button) return;
     button.addEventListener('click', async () => {
@@ -219,9 +227,8 @@
           return;
         }
         if (source === 'signup') {
-          const form = $('#authForm');
-          const info = prepareSignupData(form);
-          savePending({ role: info.role, age: info.age, ageConfirmed: true, terms: true, privacy: true, name: info.name });
+          const info = prepareGoogleSignupData($('#authForm'));
+          savePending({ role: info.role, age: info.age, ageConfirmed: true, terms: true, privacy: true });
         }
         await RelayDB.signInGoogle();
       } catch (error) {
