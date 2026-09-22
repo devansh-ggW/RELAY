@@ -305,3 +305,10 @@ h2,h3{font-weight:820;letter-spacing:-.035em}
   .applicant-actions .select{max-width:none}
   .footer-inner{flex-direction:column;align-items:flex-start}
 }
+
+.activity-list{border-top:1px solid var(--line)}
+.activity-row{display:flex;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px solid var(--line);background:#fff}
+.activity-row:hover{background:#fbfbf9}
+.activity-row.unread{padding-left:10px;border-left:3px solid var(--ink)}
+.activity-row p{margin:4px 0 0;color:var(--muted);font-size:.78rem}
+.activity-row small{color:var(--soft);white-space:nowrap;font-size:.67rem}
