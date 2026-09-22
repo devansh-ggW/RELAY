@@ -74,6 +74,25 @@ create table if not exists public.conversations (
   constraint conversations_distinct_people check (seeker_id <> employer_id)
 );
 
+create or replace function public.snapshot_conversation_participants()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  select name into new.seeker_name from public.profiles where id = new.seeker_id;
+  select name into new.employer_name from public.profiles where id = new.employer_id;
+  return new;
+end;
+$$;
+
+drop trigger if exists snapshot_conversation_participants_trigger on public.conversations;
+create trigger snapshot_conversation_participants_trigger
+before insert on public.conversations
+for each row execute procedure public.snapshot_conversation_participants();
+
+revoke execute on function public.snapshot_conversation_participants() from public,anon,authenticated;
+
 create table if not exists public.messages (
   id uuid primary key default gen_random_uuid(),
   conversation_id uuid not null references public.conversations(id) on delete cascade,
