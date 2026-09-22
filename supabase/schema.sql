@@ -181,6 +181,73 @@ for each row execute procedure public.snapshot_application_profile();
 revoke execute on function public.sync_profile_public() from public,anon,authenticated;
 revoke execute on function public.snapshot_application_profile() from public,anon,authenticated;
 
+create table if not exists public.notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  type text not null check (type in ('application','message','system','job')),
+  title text not null,
+  body text not null,
+  link text,
+  read_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+alter table public.notifications enable row level security;
+
+drop policy if exists notifications_select_self on public.notifications;
+create policy notifications_select_self on public.notifications
+for select to authenticated using (user_id = (select auth.uid()));
+
+drop policy if exists notifications_update_self on public.notifications;
+create policy notifications_update_self on public.notifications
+for update to authenticated
+using (user_id = (select auth.uid()))
+with check (user_id = (select auth.uid()));
+
+create index if not exists notifications_user_idx on public.notifications(user_id, created_at desc);
+
+create or replace function public.notify_application_status()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $
+begin
+  if old.status is distinct from new.status then
+    insert into public.notifications(user_id,type,title,body,link)
+    values (new.applicant_id,'application','Application updated','Your application status changed to ' || new.status || '.','applications.html');
+  end if;
+  return new;
+end;
+$;
+
+drop trigger if exists application_status_notification on public.applications;
+create trigger application_status_notification after update of status on public.applications
+for each row execute procedure public.notify_application_status();
+
+create or replace function public.notify_new_message()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $
+declare recipient uuid;
+begin
+  select case when c.seeker_id = new.sender_id then c.employer_id else c.seeker_id end
+  into recipient from public.conversations c where c.id = new.conversation_id;
+  if recipient is not null then
+    insert into public.notifications(user_id,type,title,body,link)
+    values (recipient,'message','New message','You have a new Relay message.','messages.html');
+  end if;
+  return new;
+end;
+$;
+
+drop trigger if exists message_notification on public.messages;
+create trigger message_notification after insert on public.messages
+for each row execute procedure public.notify_new_message();
+
+revoke execute on function public.notify_application_status() from public,anon,authenticated;
+revoke execute on function public.notify_new_message() from public,anon,authenticated;
+
 create table if not exists public.reports (
   id uuid primary key default gen_random_uuid(),
   reporter_id uuid not null references public.profiles(id) on delete cascade,
