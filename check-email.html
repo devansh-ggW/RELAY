@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Check your email — Relay</title><meta name="description" content="Confirm your Relay email address.">
+<link rel="icon" href="assets/relay-icon.svg"><link rel="stylesheet" href="assets/css/styles.css"></head>
+<body><div id="app-shell"></div><main><section class="auth-wrap"><div class="auth-card">
+<div class="eyebrow"><span class="dot"></span>Almost there</div>
+<h1>Check your inbox.</h1>
+<p class="sub">Relay created your account. Confirm your email address to finish sign-in.</p>
+<div class="detail-card" style="padding:15px;margin:16px 0"><strong id="emailText">your email address</strong><div class="small-muted" style="margin-top:4px">The confirmation link will return you to Relay.</div></div>
+<div class="stack"><a class="btn btn-primary btn-large" href="login.html">Go to login</a><button class="btn" id="copyEmail" type="button">Copy email</button></div>
+<p class="small-muted legal-mini">Didn't get the email? Check spam, then request another reset/confirmation flow from your account provider.</p>
+</div></section></main><div id="site-footer"></div>
+<script src="assets/js/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/supabase.js"></script><script src="assets/js/app.js"></script>
+<script>const e=new URLSearchParams(location.search).get('email')||'';document.getElementById('emailText').textContent=e||'your email address';document.getElementById('copyEmail').addEventListener('click',async()=>{if(!e)return;try{await navigator.clipboard.writeText(e);document.getElementById('copyEmail').textContent='Copied';}catch{}});</script>
+</body></html>
