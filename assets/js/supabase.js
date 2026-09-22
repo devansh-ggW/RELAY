@@ -55,6 +55,12 @@
       return { user: data.user, session: data.session, profile: data.user ? await getProfile(data.user.id).catch(() => null) : null };
     },
 
+    async resendSignupConfirmation(email) {
+      if (!client) throw new Error('Supabase is not configured.');
+      const { error } = await client.auth.resend({ type: 'signup', email });
+      if (error) throw error;
+    },
+
     async signInGoogle() {
       if (!client) throw new Error('Supabase is not configured.');
       const redirectTo = new URL('auth-callback.html?flow=google', location.href).href;
