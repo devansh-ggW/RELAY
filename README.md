@@ -1,28 +1,40 @@
 # Relay
 
-India-first hiring marketplace prototype: people looking for work + people hiring.
+India-first hiring marketplace for adults looking for work and people hiring.
 
-## Run
+## Current product rules
 
-This is a plain multi-page HTML/CSS/JS site. Open `index.html` directly or serve the folder with any static web server.
+- Relay currently accepts users who are 18+.
+- No seeded jobs, companies, reviews, applicants, messages, or activity are included.
+- Marketplace data comes from Supabase.
+- Email/password authentication is live through Supabase Auth.
+- Google OAuth is wired in the frontend but requires Google OAuth credentials to be enabled in Supabase.
 
-## Supabase
+## Supabase project
 
-The frontend includes a Supabase-ready client layer. The connected Supabase account currently exposes no project through the connector, so the site safely runs in local demo mode until a project is available.
+Relay is connected to the Supabase project `relay`.
 
-When the project is ready:
+The database schema and RLS policies are in `supabase/schema.sql` and have been applied to the project. The frontend uses the project's publishable key in `assets/js/config.js`; never put a Supabase service-role key in browser code.
 
-1. Run `supabase/schema.sql` in the Supabase SQL editor.
-2. Add the project URL and publishable key to `assets/js/config.js`.
-3. The existing auth/job hooks will use Supabase when configured.
+## Enable Google sign-in
 
-Never put a service-role key in browser code. Only a publishable/anon key belongs in a static frontend.
+Supabase requires a Google OAuth client ID and client secret before the Google provider can authenticate users. In Supabase Dashboard, open Authentication → Providers → Google and enable it with credentials from Google Cloud's OAuth configuration.
 
+For the Google OAuth application:
+
+1. Add the final Relay website origin as an authorized JavaScript origin.
+2. Add the Supabase Auth callback URL shown on the Supabase Google provider page as an authorized redirect URI.
+3. Save the Google client ID and secret in the Supabase Google provider settings.
+4. In Supabase URL Configuration, set the production Site URL and add the Relay `auth-callback.html` URL to the allowed redirect URLs.
+
+Supabase's current Google setup documentation: https://supabase.com/docs/guides/auth/social-login/auth-google
 
 ## GitHub Pages
 
-The site is a plain static build and can be published directly from the main branch:
+The site is a plain static build and needs no build step:
 
-Repository → Settings → Pages → Build and deployment → Deploy from a branch → main / (root).
+Repository → Settings → Pages → Build and deployment → Deploy from a branch → `main` / `/ (root)`.
 
-No build step is required.
+## Legal
+
+Relay includes product-ready drafts for Terms, Privacy, Safety, and Cookie/Storage notices. They should be reviewed by an India-qualified lawyer before public launch, together with the actual data flows, moderation process, user-support process, and business entity details.
