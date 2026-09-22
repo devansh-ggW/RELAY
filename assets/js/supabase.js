@@ -63,12 +63,31 @@
 
     async signInGoogle() {
       if (!client) throw new Error('Supabase is not configured.');
+      try {
+        const settingsResponse = await fetch(cfg.supabaseUrl + '/auth/v1/settings', {
+          headers: { apikey: cfg.supabasePublishableKey }
+        });
+        if (settingsResponse.ok) {
+          const settings = await settingsResponse.json();
+          const enabled = settings?.external?.google;
+          if (enabled === false) {
+            throw new Error('Google sign-in is not enabled in Relay yet. In Supabase, open Authentication → Providers → Google and enable it.');
+          }
+        }
+      } catch (error) {
+        if (error?.message?.includes('Google sign-in is not enabled')) throw error;
+      }
       const redirectTo = new URL('auth-callback.html?flow=google', location.href).href;
       const { data, error } = await client.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo, queryParams: { prompt: 'select_account' } }
       });
-      if (error) throw error;
+      if (error) {
+        if (error.message?.toLowerCase().includes('provider') && error.message?.toLowerCase().includes('not enabled')) {
+          throw new Error('Google sign-in is not enabled in Relay yet. Enable Google under Supabase → Authentication → Providers → Google.');
+        }
+        throw error;
+      }
       if (data?.url) location.assign(data.url);
     },
 
