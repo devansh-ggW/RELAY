@@ -90,7 +90,10 @@ create policy "applications_select_participants" on public.applications for sele
   applicant_id = auth.uid() or exists (select 1 from public.jobs j where j.id = job_id and j.owner_id = auth.uid())
 );
 drop policy if exists "applications_insert_self" on public.applications;
-create policy "applications_insert_self" on public.applications for insert to authenticated with check (applicant_id = auth.uid());
+create policy "applications_insert_self" on public.applications for insert to authenticated with check (
+  applicant_id = auth.uid()
+  and exists (select 1 from public.jobs j where j.id = job_id and j.status = 'open')
+);
 drop policy if exists "applications_update_employer" on public.applications;
 create policy "applications_update_employer" on public.applications for update to authenticated using (exists (select 1 from public.jobs j where j.id = job_id and j.owner_id = auth.uid()));
 
@@ -110,8 +113,13 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  insert into public.profiles (id, name, email)
-  values (new.id, coalesce(new.raw_user_meta_data->>'name', 'Relay user'), new.email)
+  insert into public.profiles (id, role, name, email)
+  values (
+    new.id,
+    case when new.raw_user_meta_data->>'role' = 'employer' then 'employer'::public.user_role else 'seeker'::public.user_role end,
+    coalesce(new.raw_user_meta_data->>'name', 'Relay user'),
+    new.email
+  )
   on conflict (id) do nothing;
   return new;
 end;
