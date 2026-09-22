@@ -15,7 +15,7 @@
     }
     document.querySelectorAll('.sidebar').forEach(side=>{
       const hrefs=[...side.querySelectorAll('a')].map(a=>a.getAttribute('href'));
-      [['saved.html','Saved jobs'],['settings.html','Settings'],['help.html','Help']].forEach(([href,label])=>{
+      [['saved.html','Saved jobs'],['notifications.html','Activity'],['settings.html','Settings'],['help.html','Help']].forEach(([href,label])=>{
         if(!hrefs.includes(href)){const a=document.createElement('a');a.className='side-link';a.href=href;a.textContent=label;side.appendChild(a)}
       });
     });
