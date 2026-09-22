@@ -99,6 +99,7 @@ create table if not exists public.profile_public (
   about text,
   experience_years integer,
   avatar_url text,
+  profile_public boolean not null default true,
   available_for_work boolean not null default true,
   updated_at timestamptz not null default now()
 );
@@ -109,7 +110,8 @@ drop policy if exists profile_public_select_employers on public.profile_public;
 create policy profile_public_select_employers on public.profile_public
 for select to authenticated
 using (
-  available_for_work = true
+  profile_public = true
+  and available_for_work = true
   and exists (
     select 1 from public.profiles p
     where p.id = (select auth.uid())
@@ -134,24 +136,24 @@ language plpgsql
 security definer set search_path = public
 as $
 begin
-  insert into public.profile_public (id,name,headline,city,state,skills,about,experience_years,avatar_url,available_for_work,updated_at)
-  values (new.id,new.name,new.headline,new.city,new.state,new.skills,new.about,new.experience_years,new.avatar_url,new.available_for_work,now())
+  insert into public.profile_public (id,name,headline,city,state,skills,about,experience_years,avatar_url,profile_public,available_for_work,updated_at)
+  values (new.id,new.name,new.headline,new.city,new.state,new.skills,new.about,new.experience_years,new.avatar_url,new.profile_public,new.available_for_work,now())
   on conflict (id) do update set
     name=excluded.name, headline=excluded.headline, city=excluded.city, state=excluded.state,
     skills=excluded.skills, about=excluded.about, experience_years=excluded.experience_years,
-    avatar_url=excluded.avatar_url, available_for_work=excluded.available_for_work, updated_at=now();
+    avatar_url=excluded.avatar_url, profile_public=excluded.profile_public, available_for_work=excluded.available_for_work, updated_at=now();
   return new;
 end;
 $;
 
 drop trigger if exists sync_profile_public_trigger on public.profiles;
 create trigger sync_profile_public_trigger
-after insert or update of name,headline,city,state,skills,about,experience_years,avatar_url,available_for_work
+after insert or update of name,headline,city,state,skills,about,experience_years,avatar_url,profile_public,available_for_work
 on public.profiles
 for each row execute procedure public.sync_profile_public();
 
-insert into public.profile_public (id,name,headline,city,state,skills,about,experience_years,avatar_url,available_for_work)
-select id,name,headline,city,state,skills,about,experience_years,avatar_url,available_for_work
+insert into public.profile_public (id,name,headline,city,state,skills,about,experience_years,avatar_url,profile_public,available_for_work)
+select id,name,headline,city,state,skills,about,experience_years,avatar_url,profile_public,available_for_work
 from public.profiles
 on conflict (id) do update set
   name=excluded.name, headline=excluded.headline, city=excluded.city, state=excluded.state,
