@@ -240,7 +240,7 @@
       if (!client) return [];
       const { data, error } = await client
         .from('applications')
-        .select('id,job_id,applicant_id,status,cover_note,created_at,applicant_name,applicant_headline,applicant_city,applicant_state,applicant_skills,applicant_about,applicant_experience_years,jobs!inner(id,title,company,location,owner_id)')
+        .select('id,job_id,applicant_id,status,cover_note,created_at,applicant_name,applicant_headline,applicant_city,applicant_state,applicant_skills,applicant_about,applicant_experience_years,applicant_portfolio_url,jobs!inner(id,title,company,location,owner_id)')
         .eq('jobs.owner_id', userId)
         .order('created_at',{ascending:false});
       if (error) throw error;
