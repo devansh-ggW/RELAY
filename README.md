@@ -17,3 +17,12 @@ When the project is ready:
 3. The existing auth/job hooks will use Supabase when configured.
 
 Never put a service-role key in browser code. Only a publishable/anon key belongs in a static frontend.
+
+
+## GitHub Pages
+
+The site is a plain static build and can be published directly from the main branch:
+
+Repository → Settings → Pages → Build and deployment → Deploy from a branch → main / (root).
+
+No build step is required.
