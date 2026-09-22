@@ -266,3 +266,23 @@ h1{font-size:clamp(2.8rem,5.3vw,5rem);letter-spacing:-.07em;max-width:760px}
 .applicant-card{background:#fff;border:1px solid var(--line)}
 @media(max-width:980px){.hero-grid{grid-template-columns:1fr;gap:28px}.talent-grid{grid-template-columns:1fr}}
 @media(max-width:760px){.container{width:min(var(--max),calc(100% - 20px))}.hero{padding-top:44px}h1{font-size:3rem}.job-card{grid-template-columns:38px 1fr}.salary{grid-column:2}.legal-page{padding:23px}.legal-page h1{font-size:2.2rem}.workspace-panel{padding:18px}.setting-row{align-items:flex-start}.footer-inner{gap:14px}}
+
+.hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.hero-note{margin-top:10px;color:#8a8d92;font-size:.74rem}
+.panel-link{display:flex;justify-content:space-between;align-items:center;padding-top:13px;margin-top:14px;border-top:1px solid var(--line);font-size:.78rem;font-weight:750}
+.panel-link:hover{text-decoration:underline;text-underline-offset:3px}
+.dark-card{background:#111217;color:#fff;border-color:#111217}
+.dark-card p{color:#b5b8be;max-width:720px}
+.muted-eyebrow{color:#b5b8be}
+.job-actions{display:flex;gap:7px;margin-top:10px}
+.job-inline-actions{grid-column:3;display:flex;gap:6px;justify-content:flex-end}
+@media(max-width:760px){
+  .nav{flex-wrap:wrap;padding:9px 0}
+  .nav-links{display:flex;order:3;flex:0 0 100%;overflow:auto;white-space:nowrap;padding-bottom:2px}
+  .nav-links a{flex:0 0 auto}
+  .nav-actions{margin-left:auto}
+  .nav-actions .btn:not(.mobile-menu){display:inline-flex}
+  .hero-actions .btn{flex:1 1 170px}
+  .panel-link{font-size:.74rem}
+  .job-inline-actions{grid-column:2;justify-content:flex-start}
+}
