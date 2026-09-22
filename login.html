@@ -1,1 +1,18 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Log in — Relay</title><link rel="icon" href="assets/relay-icon.svg"><link rel="stylesheet" href="assets/css/styles.css"></head><body><div id="app-shell"></div><main><section class="auth-wrap"><div class="auth-card"><div class="eyebrow"><span class="dot"></span>Welcome back</div><h1>Log in to Relay.</h1><p class="sub">Use your Relay account to manage applications, openings, and conversations.</p><button class="btn" id="googleBtn" type="button" style="width:100%;margin-bottom:12px">Continue with Google</button><div class="divider" style="margin:8px 0 18px"></div><form id="authForm" class="stack"><div class="field"><label class="label">Email</label><input class="input" name="email" type="email" autocomplete="email" required></div><div class="field"><label class="label">Password</label><input class="input" name="password" type="password" autocomplete="current-password" required></div><button class="btn btn-primary" type="submit">Log in</button></form><div id="authNotice" class="notice" style="margin-top:14px">By continuing, you agree to Relay's <a href="terms.html"><u>Terms</u></a> and <a href="privacy.html"><u>Privacy Policy</u></a>.</div><p class="small-muted" style="margin:16px 0 0;text-align:center"><a href="forgot-password.html"><u>Forgot password?</u></a> · <a href="signup.html"><u>Create an account</u></a></p></div></section></main><div id="site-footer"></div><script src="assets/js/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/supabase.js"></script><script src="assets/js/app.js"></script></body></html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Log in — Relay</title><meta name="description" content="Log in to Relay.">
+<link rel="icon" href="assets/relay-icon.svg"><link rel="stylesheet" href="assets/css/styles.css"></head>
+<body><div id="app-shell"></div><main><section class="auth-wrap"><div class="auth-card">
+<div class="eyebrow"><span class="dot"></span>Welcome back</div>
+<h1>Log in.</h1><p class="sub">Access your Relay profile, applications, openings, and conversations.</p>
+<button class="btn btn-google btn-large" id="googleBtn" type="button"><span class="google-g">G</span>Continue with Google</button>
+<div class="or"><span>or</span></div>
+<form id="authForm" class="stack">
+<div class="field"><label class="label">Email</label><input class="input" name="email" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+<div class="field"><div style="display:flex;justify-content:space-between;gap:10px"><label class="label">Password</label><a class="small-muted" href="forgot-password.html">Forgot password?</a></div><input class="input" name="password" type="password" autocomplete="current-password" placeholder="Your password" required></div>
+<button class="btn btn-primary btn-large" type="submit">Log in</button>
+</form>
+<div id="authNotice" class="notice" style="margin-top:14px">New to Relay? <a href="signup.html"><u>Create an account</u></a>.</div>
+<p class="small-muted legal-mini">By continuing, you acknowledge Relay's <a href="terms.html"><u>Terms</u></a> and <a href="privacy.html"><u>Privacy Policy</u></a>.</p>
+</div></section></main><div id="site-footer"></div>
+<script src="assets/js/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/js/supabase.js"></script><script src="assets/js/app.js"></script></body></html>
