@@ -18,7 +18,7 @@
       e.preventDefault();
       const f=new FormData(e.currentTarget);
       try{
-        await RelayDB.apply({job_id:job.id,applicant_id:s.user.id,cover_note:f.get('cover_note').toString().trim()||null});
+        await RelayDB.apply({job_id:job.id,applicant_id:s.user.id,cover_note:f.get('cover_note').toString().trim()||null,portfolio_url:f.get('portfolio_url').toString().trim()||null});
         root.innerHTML='<div class="detail-card" style="max-width:760px;margin:0 auto;text-align:left"><div class="eyebrow"><span class="dot"></span>Application sent</div><h1 style="font-size:2.5rem;margin:8px 0">You are in.</h1><p class="hero-copy" style="font-size:.95rem">Your application was submitted to '+esc(job.company)+'. You can track it from Applications.</p><div class="hero-actions"><a class="btn btn-primary" href="applications.html">View applications</a><a class="btn" href="jobs.html">Find another role</a></div></div>';
       }catch(error){
         if(error.message?.toLowerCase().includes('duplicate')) alert('You already applied to this opening.');
