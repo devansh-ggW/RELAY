@@ -1,0 +1,11 @@
+window.RELAY_DEMO_JOBS = [
+  { id:"job-001", title:"Frontend Developer", company:"Northstar Studio", location:"Pune, Maharashtra", type:"Full-time", mode:"Hybrid", salary:"₹35,000–₹55,000 / month", category:"Development", skills:["HTML","CSS","JavaScript"], posted:"Today", description:"Build clean, responsive interfaces for customer-facing products. You will work closely with design and product on shipping polished web experiences." },
+  { id:"job-002", title:"Short-form Video Editor", company:"Framehouse", location:"Remote · India", type:"Freelance", mode:"Remote", salary:"₹8,000–₹20,000 / project", category:"Creative", skills:["CapCut","Premiere Pro","Reels"], posted:"Yesterday", description:"Edit short-form videos for brands and creators. Strong pacing, clean captions, and an eye for what keeps people watching matter most." },
+  { id:"job-003", title:"Customer Support Executive", company:"Orbit Commerce", location:"Mumbai, Maharashtra", type:"Full-time", mode:"On-site", salary:"₹22,000–₹30,000 / month", category:"Support", skills:["Communication","English","CRM"], posted:"2 days ago", description:"Help customers across chat and email, resolve issues clearly, and keep support conversations human and efficient." },
+  { id:"job-004", title:"WordPress Website Builder", company:"Indigo Works", location:"Remote · India", type:"Part-time", mode:"Remote", salary:"₹12,000–₹22,000 / project", category:"Development", skills:["WordPress","Elementor","SEO"], posted:"3 days ago", description:"Turn straightforward briefs into fast, mobile-friendly WordPress websites for small businesses across India." },
+  { id:"job-005", title:"Social Media Manager", company:"Common Ground Cafe", location:"Nagpur, Maharashtra", type:"Part-time", mode:"Hybrid", salary:"₹18,000–₹26,000 / month", category:"Marketing", skills:["Instagram","Content","Analytics"], posted:"4 days ago", description:"Own the day-to-day social presence of a growing cafe brand: content planning, posting, community replies, and basic reporting." }
+];
+window.RELAY_DEMO_MESSAGES = [
+  {id:"m1", from:"Northstar Studio", preview:"Thanks for applying — can you share two recent projects?", time:"11:42 AM", unread:true},
+  {id:"m2", from:"Framehouse", preview:"We are reviewing applications this week.", time:"Yesterday", unread:false}
+];
