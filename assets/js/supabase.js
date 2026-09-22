@@ -101,6 +101,32 @@
       return this.updateProfile(payload);
     },
 
+    async saveJob(userId, jobId) {
+      if (!client) throw new Error('Supabase is not configured.');
+      const { error } = await client.from('saved_jobs').insert({ user_id:userId, job_id:jobId });
+      if (error && !error.message?.toLowerCase().includes('duplicate')) throw error;
+    },
+
+    async unsaveJob(userId, jobId) {
+      if (!client) throw new Error('Supabase is not configured.');
+      const { error } = await client.from('saved_jobs').delete().eq('user_id',userId).eq('job_id',jobId);
+      if (error) throw error;
+    },
+
+    async listSavedJobs(userId) {
+      if (!client) return [];
+      const { data, error } = await client.from('saved_jobs').select('created_at,jobs(*)').eq('user_id',userId).order('created_at',{ascending:false});
+      if (error) throw error;
+      return data || [];
+    },
+
+    async report(payload) {
+      if (!client) throw new Error('Supabase is not configured.');
+      const { data, error } = await client.from('reports').insert(payload).select().single();
+      if (error) throw error;
+      return data;
+    },
+
     async listJobs() {
       if (!client) return [];
       const { data, error } = await client.from('jobs').select('*').eq('status','open').order('created_at',{ascending:false});
