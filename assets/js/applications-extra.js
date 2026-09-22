@@ -20,5 +20,5 @@
       card.querySelector('button[data-app]')?.addEventListener('click',async()=>{try{await RelayDB.createConversation({seeker_id:a.applicant_id,employer_id:s.user.id,job_id:a.job_id});location.href='messages.html'}catch(err){if(err.message?.includes('duplicate'))location.href='messages.html';else toast(err.message||'Could not start conversation.')}})
     });
   };
-  const observer=new MutationObserver(()=>{if(root.querySelector('.applicant-card'))return;setTimeout(render,80)});observer.observe(root,{childList:true,subtree:true});setTimeout(render,350);
+  setTimeout(render,650);
 })();
