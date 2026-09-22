@@ -214,6 +214,10 @@
     if (!button) return;
     button.addEventListener('click', async () => {
       try {
+        if (!window.RELAY_CONFIG?.googleOAuthConfigured) {
+          toast('Google sign-in is not enabled on Relay yet. Finish the Google provider setup in Supabase first.');
+          return;
+        }
         if (source === 'signup') {
           const form = $('#authForm');
           const info = prepareSignupData(form);
