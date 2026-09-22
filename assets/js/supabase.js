@@ -142,6 +142,23 @@
       return data || [];
     },
 
+    async listTalent() {
+      if (!client) return [];
+      const { data, error } = await client
+        .from('talent_profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+
+    async getTalent(id) {
+      if (!client) return null;
+      const { data, error } = await client.from('talent_profiles').select('*').eq('id', id).maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+
     async listApplicationsForEmployer(userId) {
       if (!client) return [];
       const { data, error } = await client
