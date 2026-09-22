@@ -197,6 +197,7 @@ begin
   select p.name,p.headline,p.city,p.state,p.skills,p.about,p.experience_years
   into new.applicant_name,new.applicant_headline,new.applicant_city,new.applicant_state,new.applicant_skills,new.applicant_about,new.applicant_experience_years
   from public.profiles p where p.id = new.applicant_id;
+  new.applicant_portfolio_url := new.portfolio_url;
   return new;
 end;
 $;
