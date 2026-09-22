@@ -23,37 +23,47 @@
       return data.session || null;
     },
 
+    async completeAuthRedirect() {
+      if (!client) return null;
+      const code = new URLSearchParams(location.search).get('code');
+      if (code) {
+        const { error } = await client.auth.exchangeCodeForSession(code);
+        if (error) throw error;
+      }
+      return this.session();
+    },
+
     async signIn(email, password) {
       if (!client) throw new Error('Supabase is not configured.');
       const { data, error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      const profile = data.user ? await getProfile(data.user.id) : null;
-      return { user: data.user, profile, session: data.session };
+      return { user: data.user, session: data.session, profile: await getProfile(data.user.id) };
     },
 
-    async signUp({ email, password, name, role }) {
+    async signUp({ email, password, name, role, age, ageConfirmed, termsAcceptedAt, privacyAcceptedAt }) {
       if (!client) throw new Error('Supabase is not configured.');
+      if (Number(age) < 18) throw new Error('Relay is currently for adults aged 18 and over.');
       const { data, error } = await client.auth.signUp({
         email,
         password,
         options: {
-          data: { name, role },
-          emailRedirectTo: location.origin + '/login.html'
+          data: { name, role, age, age_confirmed: !!ageConfirmed },
+          emailRedirectTo: new URL('auth-callback.html?flow=email', location.href).href
         }
       });
       if (error) throw error;
-      return { user: data.user, session: data.session };
+      return { user: data.user, session: data.session, profile: data.user ? await getProfile(data.user.id).catch(() => null) : null };
     },
 
     async signInGoogle() {
       if (!client) throw new Error('Supabase is not configured.');
-      const redirectTo = new URL('auth-callback.html', location.href).href;
+      const redirectTo = new URL('auth-callback.html?flow=google', location.href).href;
       const { data, error } = await client.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo }
+        options: { redirectTo, queryParams: { prompt: 'select_account' } }
       });
       if (error) throw error;
-      if (data?.url) window.location.assign(data.url);
+      if (data?.url) location.assign(data.url);
     },
 
     async signOut() {
@@ -75,27 +85,25 @@
       if (error) throw error;
     },
 
-    async getProfile(userId) {
-      return getProfile(userId);
-    },
+    async getProfile(userId) { return getProfile(userId); },
 
-    async completeProfile(payload) {
+    async updateProfile(payload) {
       if (!client) throw new Error('Supabase is not configured.');
       const s = await this.session();
       if (!s?.user) throw new Error('Your session has expired. Please log in again.');
-      const clean = { ...payload, id: s.user.id, email: s.user.email };
-      const { data, error } = await client.from('profiles').upsert(clean, { onConflict: 'id' }).select().single();
+      const update = { ...payload, id: s.user.id, email: s.user.email, updated_at: new Date().toISOString() };
+      const { data, error } = await client.from('profiles').upsert(update, { onConflict: 'id' }).select().single();
       if (error) throw error;
       return data;
     },
 
+    async completeProfile(payload) {
+      return this.updateProfile(payload);
+    },
+
     async listJobs() {
       if (!client) return [];
-      const { data, error } = await client
-        .from('jobs')
-        .select('*')
-        .eq('status', 'open')
-        .order('created_at', { ascending: false });
+      const { data, error } = await client.from('jobs').select('*').eq('status','open').order('created_at',{ascending:false});
       if (error) throw error;
       return data || [];
     },
@@ -114,6 +122,12 @@
       return data;
     },
 
+    async closeJob(id) {
+      if (!client) throw new Error('Supabase is not configured.');
+      const { error } = await client.from('jobs').update({ status:'closed' }).eq('id',id);
+      if (error) throw error;
+    },
+
     async apply(payload) {
       if (!client) throw new Error('Supabase is not configured.');
       const { data, error } = await client.from('applications').insert(payload).select().single();
@@ -123,11 +137,7 @@
 
     async listApplicationsForApplicant(userId) {
       if (!client) return [];
-      const { data, error } = await client
-        .from('applications')
-        .select('*, jobs(*)')
-        .eq('applicant_id', userId)
-        .order('created_at', { ascending: false });
+      const { data, error } = await client.from('applications').select('*, jobs(*)').eq('applicant_id',userId).order('created_at',{ascending:false});
       if (error) throw error;
       return data || [];
     },
@@ -136,11 +146,45 @@
       if (!client) return [];
       const { data, error } = await client
         .from('applications')
-        .select('*, jobs!inner(*)')
+        .select('id,status,cover_note,created_at,jobs!inner(id,title,company,location,owner_id),profiles:applicant_id(id,name,headline,city,state,skills,about,experience_years,age)')
         .eq('jobs.owner_id', userId)
-        .order('created_at', { ascending: false });
+        .order('created_at',{ascending:false});
       if (error) throw error;
       return data || [];
+    },
+
+    async updateApplication(id, status) {
+      if (!client) throw new Error('Supabase is not configured.');
+      const { error } = await client.from('applications').update({ status }).eq('id',id);
+      if (error) throw error;
+    },
+
+    async listConversations(userId) {
+      if (!client) return [];
+      const { data, error } = await client.from('conversations').select('*').or('seeker_id.eq.'+userId+',employer_id.eq.'+userId).order('created_at',{ascending:false});
+      if (error) throw error;
+      return data || [];
+    },
+
+    async createConversation(payload) {
+      if (!client) throw new Error('Supabase is not configured.');
+      const { data, error } = await client.from('conversations').insert(payload).select().single();
+      if (error) throw error;
+      return data;
+    },
+
+    async getMessages(conversationId) {
+      if (!client) return [];
+      const { data, error } = await client.from('messages').select('*').eq('conversation_id',conversationId).order('created_at',{ascending:true});
+      if (error) throw error;
+      return data || [];
+    },
+
+    async sendMessage(payload) {
+      if (!client) throw new Error('Supabase is not configured.');
+      const { data, error } = await client.from('messages').insert(payload).select().single();
+      if (error) throw error;
+      return data;
     }
   };
 })();
