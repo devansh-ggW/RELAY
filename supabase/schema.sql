@@ -89,6 +89,96 @@ create table if not exists public.saved_jobs (
   primary key (user_id, job_id)
 );
 
+create table if not exists public.profile_public (
+  id uuid primary key references public.profiles(id) on delete cascade,
+  name text not null,
+  headline text,
+  city text,
+  state text,
+  skills text[] not null default '{}',
+  about text,
+  experience_years integer,
+  avatar_url text,
+  available_for_work boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.profile_public enable row level security;
+
+drop policy if exists profile_public_select_employers on public.profile_public;
+create policy profile_public_select_employers on public.profile_public
+for select to authenticated
+using (
+  available_for_work = true
+  and exists (
+    select 1 from public.profiles p
+    where p.id = (select auth.uid())
+      and p.role = 'employer'
+      and p.age_confirmed = true
+      and p.onboarding_complete = true
+  )
+);
+
+alter table public.applications
+  add column if not exists applicant_name text,
+  add column if not exists applicant_headline text,
+  add column if not exists applicant_city text,
+  add column if not exists applicant_state text,
+  add column if not exists applicant_skills text[] not null default '{}',
+  add column if not exists applicant_about text,
+  add column if not exists applicant_experience_years integer;
+
+create or replace function public.sync_profile_public()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $
+begin
+  insert into public.profile_public (id,name,headline,city,state,skills,about,experience_years,avatar_url,available_for_work,updated_at)
+  values (new.id,new.name,new.headline,new.city,new.state,new.skills,new.about,new.experience_years,new.avatar_url,new.available_for_work,now())
+  on conflict (id) do update set
+    name=excluded.name, headline=excluded.headline, city=excluded.city, state=excluded.state,
+    skills=excluded.skills, about=excluded.about, experience_years=excluded.experience_years,
+    avatar_url=excluded.avatar_url, available_for_work=excluded.available_for_work, updated_at=now();
+  return new;
+end;
+$;
+
+drop trigger if exists sync_profile_public_trigger on public.profiles;
+create trigger sync_profile_public_trigger
+after insert or update of name,headline,city,state,skills,about,experience_years,avatar_url,available_for_work
+on public.profiles
+for each row execute procedure public.sync_profile_public();
+
+insert into public.profile_public (id,name,headline,city,state,skills,about,experience_years,avatar_url,available_for_work)
+select id,name,headline,city,state,skills,about,experience_years,avatar_url,available_for_work
+from public.profiles
+on conflict (id) do update set
+  name=excluded.name, headline=excluded.headline, city=excluded.city, state=excluded.state,
+  skills=excluded.skills, about=excluded.about, experience_years=excluded.experience_years,
+  avatar_url=excluded.avatar_url, available_for_work=excluded.available_for_work, updated_at=now();
+
+create or replace function public.snapshot_application_profile()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $
+begin
+  select p.name,p.headline,p.city,p.state,p.skills,p.about,p.experience_years
+  into new.applicant_name,new.applicant_headline,new.applicant_city,new.applicant_state,new.applicant_skills,new.applicant_about,new.applicant_experience_years
+  from public.profiles p where p.id = new.applicant_id;
+  return new;
+end;
+$;
+
+drop trigger if exists snapshot_application_profile_trigger on public.applications;
+create trigger snapshot_application_profile_trigger
+before insert on public.applications
+for each row execute procedure public.snapshot_application_profile();
+
+revoke execute on function public.sync_profile_public() from public,anon,authenticated;
+revoke execute on function public.snapshot_application_profile() from public,anon,authenticated;
+
 create table if not exists public.reports (
   id uuid primary key default gen_random_uuid(),
   reporter_id uuid not null references public.profiles(id) on delete cascade,
