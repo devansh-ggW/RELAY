@@ -141,6 +141,13 @@
       return data;
     },
 
+    async updateJob(id, payload) {
+      if (!client) throw new Error('Supabase is not configured.');
+      const { data, error } = await client.from('jobs').update(payload).eq('id', id).select().single();
+      if (error) throw error;
+      return data;
+    },
+
     async createJob(payload) {
       if (!client) throw new Error('Supabase is not configured.');
       const { data, error } = await client.from('jobs').insert(payload).select().single();
