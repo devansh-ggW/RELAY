@@ -1,40 +1,93 @@
-# Relay
+# RELAY
 
-India-first hiring marketplace for adults looking for work and people hiring.
+RELAY is an India-only hiring marketplace for adults 18+.
 
-## Current product rules
+The product has two sides:
+- people looking for work
+- people hiring
 
-- Relay currently accepts users who are 18+.
-- No seeded jobs, companies, reviews, applicants, messages, or activity are included.
-- Marketplace data comes from Supabase.
-- Email/password authentication is live through Supabase Auth.
-- Google OAuth is wired in the frontend but requires Google OAuth credentials to be enabled in Supabase.
+## Stack
 
-## Supabase project
+- Static HTML/CSS/JavaScript frontend
+- Supabase Auth
+- Supabase PostgreSQL
+- Supabase Realtime
+- GitHub Pages-compatible deployment
 
-Relay is connected to the Supabase project `relay`.
+## Live data policy
 
-The database schema and RLS policies are in `supabase/schema.sql` and have been applied to the project. The frontend uses the project's publishable key in `assets/js/config.js`; never put a Supabase service-role key in browser code.
+The public marketplace is intentionally empty until real users publish real profiles and openings. The repository contains no seeded jobs, applicants, companies, testimonials, ratings, or activity.
 
-## Enable Google sign-in
+## Supabase
 
-Supabase requires a Google OAuth client ID and client secret before the Google provider can authenticate users. In Supabase Dashboard, open Authentication → Providers → Google and enable it with credentials from Google Cloud's OAuth configuration.
+The current frontend is configured for the Relay project:
 
-For the Google OAuth application:
+- Project: `relay`
+- URL: `https://jeorjtyzstmlpdszwgfn.supabase.co`
+- Browser key: publishable key only
 
-1. Add the final Relay website origin as an authorized JavaScript origin.
-2. Add the Supabase Auth callback URL shown on the Supabase Google provider page as an authorized redirect URI.
-3. Save the Google client ID and secret in the Supabase Google provider settings.
-4. In Supabase URL Configuration, set the production Site URL and add the Relay `auth-callback.html` URL to the allowed redirect URLs.
+Never place a Supabase service-role key in the frontend.
 
-Supabase's current Google setup documentation: https://supabase.com/docs/guides/auth/social-login/auth-google
+Run `supabase/schema.sql` in a fresh project. The live project has already received the same production migrations.
 
-## GitHub Pages
+## Google sign-in
 
-The site is a plain static build and needs no build step:
+In Supabase:
 
-Repository → Settings → Pages → Build and deployment → Deploy from a branch → `main` / `/ (root)`.
+1. Authentication → Providers → Google.
+2. Create a Google OAuth Web Application client in Google Cloud.
+3. Add the Relay production origin to Authorized JavaScript origins.
+4. Add the Supabase Google callback shown in the provider screen to Authorized redirect URIs.
+5. Paste the Google Client ID and Client Secret into the Supabase Google provider and enable it.
+6. Add the Relay callback URL to Supabase's redirect allow list:
+   `https://<your-relay-domain>/auth-callback.html?flow=google`
 
-## Legal
+The site already calls `signInWithOAuth({ provider: 'google' })`; no frontend switch is required after the provider is enabled.
 
-Relay includes product-ready drafts for Terms, Privacy, Safety, and Cookie/Storage notices. They should be reviewed by an India-qualified lawyer before public launch, together with the actual data flows, moderation process, user-support process, and business entity details.
+## Auth email branding
+
+Supabase's built-in SMTP is intended for development/testing and is not suitable for public production delivery. For production auth email, configure custom SMTP in:
+
+Authentication → Emails → SMTP Settings
+
+Set the sender name to:
+
+`Relay`
+
+Use a From address on a domain you control, then use the branded templates in:
+
+`supabase/email-templates/confirmation.html`
+`supabase/email-templates/recovery.html`
+
+This is what changes emails from the generic Supabase-auth presentation to Relay-branded delivery.
+
+## Production security
+
+Supabase Security Advisor should be reviewed regularly. The current database security findings are limited to the Auth setting for leaked-password protection; enable that from the Supabase Auth password security settings before public launch.
+
+## Pages
+
+Core product pages include:
+`index.html`
+`jobs.html`
+`job.html`
+`login.html`
+`signup.html`
+`onboarding.html`
+`dashboard.html`
+`applications.html`
+`messages.html`
+`profile.html`
+`talent.html`
+`talent-profile.html`
+`post-job.html`
+`edit-job.html`
+`saved.html`
+`settings.html`
+`report.html`
+`help.html`
+plus policy and legal pages.
+
+## Important launch items
+
+The legal pages are product drafts. Before public launch, replace any development-only operator/contact language with your real legal entity, support contact, grievance contact, and final retention/deletion process. Review the policies against your final business structure and data processing practices.
