@@ -36,6 +36,9 @@ create table if not exists public.conversations (
   created_at timestamptz not null default now()
 );
 
+alter table public.conversations drop constraint if exists conversations_unique_pair;
+alter table public.conversations add constraint conversations_unique_pair unique (job_id, seeker_id, employer_id);
+
 create table if not exists public.messages (
   id uuid primary key default gen_random_uuid(), conversation_id uuid not null references public.conversations(id) on delete cascade,
   sender_id uuid not null references public.profiles(id) on delete cascade, body text not null, created_at timestamptz not null default now()
@@ -48,13 +51,32 @@ alter table public.conversations enable row level security;
 alter table public.messages enable row level security;
 
 alter table public.profiles drop constraint if exists profiles_age_check;
+alter table public.profiles drop constraint if exists profiles_age_check;
 alter table public.profiles add constraint profiles_age_check check (age is null or age between 18 and 100);
+alter table public.profiles drop constraint if exists profiles_onboarding_gate;
+alter table public.profiles add constraint profiles_onboarding_gate check (
+  onboarding_complete = false
+  or (age between 18 and 100 and age_confirmed = true and terms_accepted_at is not null and privacy_accepted_at is not null)
+);
 create index if not exists jobs_status_created_idx on public.jobs(status, created_at desc);
 create index if not exists profiles_role_idx on public.profiles(role);
 
 drop policy if exists profiles_select_authenticated on public.profiles;
 drop policy if exists profiles_select_self on public.profiles;
-create policy profiles_select_self on public.profiles for select to authenticated using (id = auth.uid());
+drop policy if exists profiles_select_allowed on public.profiles;
+create policy profiles_select_allowed on public.profiles for select to authenticated using (
+  id = auth.uid()
+  or exists (
+    select 1 from public.applications a
+    join public.jobs j on j.id = a.job_id
+    where a.applicant_id = public.profiles.id and j.owner_id = auth.uid()
+  )
+  or exists (
+    select 1 from public.conversations c
+    where (c.seeker_id = auth.uid() and c.employer_id = public.profiles.id)
+       or (c.employer_id = auth.uid() and c.seeker_id = public.profiles.id)
+  )
+);
 drop policy if exists profiles_insert_self on public.profiles;
 create policy profiles_insert_self on public.profiles for insert to authenticated with check (id = auth.uid());
 drop policy if exists profiles_update_self on public.profiles;
@@ -80,7 +102,13 @@ create policy applications_update_employer on public.applications for update to 
 drop policy if exists conversations_select_participants on public.conversations;
 create policy conversations_select_participants on public.conversations for select to authenticated using (seeker_id = auth.uid() or employer_id = auth.uid());
 drop policy if exists conversations_insert_participants on public.conversations;
-create policy conversations_insert_participants on public.conversations for insert to authenticated with check (seeker_id = auth.uid() or employer_id = auth.uid());
+create policy conversations_insert_participants on public.conversations for insert to authenticated with check (
+  seeker_id <> employer_id
+  and (seeker_id = auth.uid() or employer_id = auth.uid())
+  and exists (
+    select 1 from public.profiles p where p.id = auth.uid() and p.age_confirmed = true and p.onboarding_complete = true
+  )
+);
 drop policy if exists messages_select_participants on public.messages;
 create policy messages_select_participants on public.messages for select to authenticated using (exists (select 1 from public.conversations c where c.id = conversation_id and (c.seeker_id = auth.uid() or c.employer_id = auth.uid())));
 drop policy if exists messages_insert_sender on public.messages;
