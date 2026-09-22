@@ -60,6 +60,15 @@ create table if not exists public.applications (
   applicant_id uuid not null references public.profiles(id) on delete cascade,
   status text not null default 'Applied' check (status in ('Applied','Reviewing','Interview','Offer','Rejected')),
   cover_note text,
+  portfolio_url text,
+  applicant_name text,
+  applicant_headline text,
+  applicant_city text,
+  applicant_state text,
+  applicant_skills text[] not null default '{}',
+  applicant_about text,
+  applicant_experience_years integer,
+  applicant_portfolio_url text,
   created_at timestamptz not null default now(),
   unique(job_id, applicant_id)
 );
